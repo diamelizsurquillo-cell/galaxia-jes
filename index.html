@@ -3,62 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Feliz Aniversario - Nuestra Galaxia</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="description" content="Nuestra Galaxia de Aniversario - Un universo de recuerdos desde el 23.01.2023">
+    <title>🌌 Nuestra Galaxia - 23.01.2023</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Canvases for Galaxy Background -->
+
+    <!-- ====== WELCOME SCREEN ====== -->
+    <div id="welcome-screen" class="welcome-screen">
+        <canvas id="welcome-canvas"></canvas>
+        <div class="welcome-content">
+            <p class="welcome-pre">Bienvenidos a</p>
+            <h1 class="welcome-title">Nuestra Galaxia</h1>
+            <div class="welcome-date-line"></div>
+            <p class="welcome-date">23 · 01 · 2023</p>
+            <p class="welcome-sub">Un universo de recuerdos juntos</p>
+            <button id="enter-btn" class="enter-btn">
+                <i class="fas fa-rocket"></i>
+                <span>Explorar el Universo</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ====== CANVASES ====== -->
     <canvas id="deep-space-canvas"></canvas>
+    <canvas id="nebula-canvas"></canvas>
     <canvas id="spiral-galaxy-canvas"></canvas>
-    
-    <!-- Audio Elements -->
-    <audio id="bg-music" loop>
+
+    <!-- Shooting Stars & Particles -->
+    <div id="shooting-stars-container"></div>
+    <div id="particles-container"></div>
+
+    <!-- ====== AUDIO ====== -->
+    <audio id="bg-music" loop preload="auto">
         <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=deep-space-114114.mp3" type="audio/mpeg">
     </audio>
-    <audio id="click-sound">
+    <audio id="click-sound" preload="auto">
         <source src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_0625c1539c.mp3?filename=tech-ui-click-snappy-713.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- UI Overlay -->
-    <div class="ui-container">
+    <!-- ====== UI OVERLAY ====== -->
+    <div class="ui-container" id="ui-container">
         <div class="controls">
-            <button id="mute-btn" title="Activar/Desactivar Música"><i class="fas fa-volume-mute"></i></button>
-            <button id="upload-btn" title="Agregar Recuerdo"><i class="fas fa-camera"></i> Subir Foto</button>
+            <button id="mute-btn" class="icon-btn" title="Música"><i class="fas fa-volume-mute"></i></button>
+            <button id="upload-btn" title="Agregar Recuerdo"><i class="fas fa-camera"></i> <span class="btn-text">Subir Fotos</span></button>
         </div>
         <div class="counter" id="photo-counter">Recuerdos en la galaxia: 0</div>
     </div>
-    
+
     <input type="file" id="file-input" accept="image/*" style="display: none;" multiple>
 
-    <!-- Galaxy Container (DOM Elements) -->
-    <div class="galaxy-wrapper">
+    <!-- ====== GALAXY CENTER ====== -->
+    <div class="galaxy-wrapper" id="galaxy-wrapper">
         <div class="galaxy-center">
             <div class="core-glow"></div>
             <h1 class="date-title">23.01.2023</h1>
-            <p class="anniversary-msg">Feliz Aniversario<br>Mi Universo Entero</p>
-            <div class="confetti-container"></div>
+            <p class="anniversary-msg">Feliz Aniversario<br>Mi Universo Entero ✨</p>
+            <!-- Live Counter -->
+            <div class="live-counter" id="live-counter">
+                <div class="counter-item"><span class="counter-number" id="c-years">0</span><span class="counter-label">Años</span></div>
+                <div class="counter-item"><span class="counter-number" id="c-months">0</span><span class="counter-label">Meses</span></div>
+                <div class="counter-item"><span class="counter-number" id="c-days">0</span><span class="counter-label">Días</span></div>
+                <div class="counter-item"><span class="counter-number" id="c-hours">0</span><span class="counter-label">Hrs</span></div>
+                <div class="counter-item"><span class="counter-number" id="c-min">0</span><span class="counter-label">Min</span></div>
+                <div class="counter-item"><span class="counter-number" id="c-sec">0</span><span class="counter-label">Seg</span></div>
+            </div>
         </div>
-        
-        <!-- Planets will be injected here via JS -->
         <div id="orbits-container"></div>
     </div>
 
-    <!-- Lightbox Modal -->
+    <!-- ====== LIGHTBOX MODAL ====== -->
     <div id="lightbox" class="modal">
         <span class="close">&times;</span>
         <div class="modal-content">
             <button class="nav-btn prev"><i class="fas fa-chevron-left"></i></button>
             <div class="img-wrapper">
-                <img id="modal-img" src="">
-                <div id="modal-caption" class="caption"></div>
+                <img id="modal-img" src="" alt="Momento especial">
+                <p class="modal-description" id="modal-description"></p>
             </div>
             <button class="nav-btn next"><i class="fas fa-chevron-right"></i></button>
         </div>
     </div>
 
-    <!-- Supabase JS Client -->
+    <!-- ====== SCRIPTS ====== -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="script.js"></script>
 </body>
