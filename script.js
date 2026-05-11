@@ -13,6 +13,12 @@ document.addEventListener('DOMContentLoaded', () => {
         galaxyCanvas.width = window.innerWidth;
         galaxyCanvas.height = window.innerHeight;
         drawDeepSpace(); // Redraw static stars on resize
+        
+        // Escala responsiva para mantener la galaxia visible en pantallas pequeñas
+        const wrapper = document.querySelector('.galaxy-wrapper');
+        // Usamos 900px como el ancho ideal para que no se corte
+        const scale = window.innerWidth < 900 ? window.innerWidth / 900 : 1;
+        wrapper.style.transform = `scale(${scale})`;
     }
     window.addEventListener('resize', resize);
 
@@ -147,9 +153,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function addPlanet(src, index) {
-        // Aumentamos el radio base para que las órbitas bordeen el texto y no lo tapen
-        const baseRadius = window.innerWidth < 768 ? 180 : 320;
-        const orbitRadius = baseRadius + (index * 80) % 400;
+        // Al usar 'scale' global, podemos usar radios amplios para que las fotos
+        // nunca tapen el texto central, ya que todo se encogerá proporcionalmente en móvil.
+        const orbitRadius = 330 + (index * 85) % 450;
         
         const planetObj = {
             src: src,
