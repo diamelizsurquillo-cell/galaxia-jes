@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feliz Aniversario - Nuestra Galaxia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Canvases for Galaxy Background -->
+    <canvas id="deep-space-canvas"></canvas>
+    <canvas id="spiral-galaxy-canvas"></canvas>
+    
+    <!-- Audio Elements -->
+    <audio id="bg-music" loop>
+        <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=deep-space-114114.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="click-sound">
+        <source src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_0625c1539c.mp3?filename=tech-ui-click-snappy-713.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- UI Overlay -->
+    <div class="ui-container">
+        <div class="controls">
+            <button id="mute-btn" title="Activar/Desactivar Música"><i class="fas fa-volume-mute"></i></button>
+            <button id="upload-btn" title="Agregar Recuerdo"><i class="fas fa-camera"></i> Subir Foto</button>
+        </div>
+        <div class="counter" id="photo-counter">Recuerdos en la galaxia: 0</div>
+    </div>
+    
+    <input type="file" id="file-input" accept="image/*" style="display: none;">
+
+    <!-- Galaxy Container (DOM Elements) -->
+    <div class="galaxy-wrapper">
+        <div class="galaxy-center">
+            <div class="core-glow"></div>
+            <h1 class="date-title">23.01.2023</h1>
+            <p class="anniversary-msg">Feliz Aniversario<br>Mi Universo Entero</p>
+            <div class="confetti-container"></div>
+        </div>
+        
+        <!-- Planets will be injected here via JS -->
+        <div id="orbits-container"></div>
+    </div>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="modal">
+        <span class="close">&times;</span>
+        <div class="modal-content">
+            <button class="nav-btn prev"><i class="fas fa-chevron-left"></i></button>
+            <div class="img-wrapper">
+                <img id="modal-img" src="">
+                <div id="modal-caption" class="caption"></div>
+            </div>
+            <button class="nav-btn next"><i class="fas fa-chevron-right"></i></button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
