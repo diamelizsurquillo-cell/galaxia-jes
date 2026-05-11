@@ -89,7 +89,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Draw Light Trails for Planets
         planets.forEach(p => {
             galaxyCtx.beginPath();
-            // A gradient trail would be perfect, but simple opacity fading works well
             galaxyCtx.strokeStyle = 'rgba(255, 215, 0, 0.4)';
             galaxyCtx.lineWidth = 3;
             galaxyCtx.lineCap = 'round';
@@ -110,31 +109,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // --- DOM PLANETS LOGIC ---
-    const defaultUrls = [
-        'https://images.unsplash.com/photo-1518599904199-0ca897819ddb?auto=format&fit=crop&w=300&q=80',
-        'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=300&q=80',
-        'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=300&q=80',
-        'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=300&q=80',
-        'https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=300&q=80'
-    ];
+    // --- SUPABASE INTEGRATION ---
+    const supabaseUrl = 'https://bafgrphusfkpxaqiyoqm.supabase.co';
+    const supabaseKey = 'sb_publishable_I9dYqAqLLVAxkaENes86pA_jy86lZhA';
+    const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
     let photos = [];
-    try {
-        const stored = localStorage.getItem('galaxy_photos');
-        if (stored) {
-            photos = JSON.parse(stored);
-            // Filtrar y eliminar las fotos por defecto guardadas
-            photos = photos.filter(p => !defaultUrls.includes(p.src));
-            localStorage.setItem('galaxy_photos', JSON.stringify(photos));
-        }
-    } catch(e) {
-        photos = [];
-    }
-
     const orbitsContainer = document.getElementById('orbits-container');
     const photoCounter = document.getElementById('photo-counter');
     let planets = [];
+
+    async function loadPhotos() {
+        const { data, error } = await _supabase.storage.from('photos').list();
+        if (error) {
+            console.error("Error cargando fotos de Supabase:", error);
+            return;
+        }
+        
+        // Filtrar archivos vacíos o de sistema si los hay
+        const validFiles = data.filter(file => file.name !== '.emptyFolderPlaceholder');
+        
+        photos = validFiles.map(file => {
+            const { data: urlData } = _supabase.storage.from('photos').getPublicUrl(file.name);
+            return { src: urlData.publicUrl };
+        });
+        
+        initPlanets();
+    }
 
     function initPlanets() {
         planets.forEach(p => { if(p.element) p.element.remove(); });
@@ -147,7 +148,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function addPlanet(src, index) {
         // Aumentamos el radio base para que las órbitas bordeen el texto y no lo tapen
-        // Usamos un radio menor en móviles para que quepan en la pantalla
         const baseRadius = window.innerWidth < 768 ? 180 : 320;
         const orbitRadius = baseRadius + (index * 80) % 400;
         
@@ -278,22 +278,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    fileInput.addEventListener('change', (e) => {
+    fileInput.addEventListener('change', async (e) => {
         const file = e.target.files[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const newSrc = event.target.result;
-                photos.push({ src: newSrc });
-                try {
-                    localStorage.setItem('galaxy_photos', JSON.stringify(photos));
-                } catch(e) {
-                    console.warn("Storage quota exceeded.");
-                }
-                addPlanet(newSrc, photos.length - 1);
-                updateCounter();
-            };
-            reader.readAsDataURL(file);
+            const originalText = uploadBtn.innerHTML;
+            uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Subiendo...';
+            uploadBtn.style.pointerEvents = 'none';
+
+            const fileName = `${Date.now()}_${file.name}`;
+            const { data, error } = await _supabase.storage.from('photos').upload(fileName, file);
+            
+            if (error) {
+                alert("Error al subir la foto: " + error.message);
+                uploadBtn.innerHTML = originalText;
+                uploadBtn.style.pointerEvents = 'auto';
+                return;
+            }
+
+            const { data: urlData } = _supabase.storage.from('photos').getPublicUrl(fileName);
+            
+            photos.push({ src: urlData.publicUrl });
+            addPlanet(urlData.publicUrl, photos.length - 1);
+            updateCounter();
+
+            uploadBtn.innerHTML = originalText;
+            uploadBtn.style.pointerEvents = 'auto';
         }
     });
 
@@ -338,6 +347,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initDeepSpace();
     resize();
     initGalaxyStars();
-    initPlanets();
+    loadPhotos(); // Load from Supabase
     animate();
 });
