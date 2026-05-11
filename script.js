@@ -146,8 +146,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function addPlanet(src, index) {
-        // Distribute planets at different distances
-        const orbitRadius = 150 + (index * 60) % 500; // Between 150 and 650 radius
+        // Aumentamos el radio base para que las órbitas bordeen el texto y no lo tapen
+        // Usamos un radio menor en móviles para que quepan en la pantalla
+        const baseRadius = window.innerWidth < 768 ? 180 : 320;
+        const orbitRadius = baseRadius + (index * 80) % 400;
         
         const planetObj = {
             src: src,
