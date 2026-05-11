@@ -279,30 +279,33 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     fileInput.addEventListener('change', async (e) => {
-        const file = e.target.files[0];
-        if (file) {
+        const files = e.target.files;
+        if (files.length > 0) {
             const originalText = uploadBtn.innerHTML;
-            uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Subiendo...';
+            uploadBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Subiendo ${files.length} fotos...`;
             uploadBtn.style.pointerEvents = 'none';
 
-            const fileName = `${Date.now()}_${file.name}`;
-            const { data, error } = await _supabase.storage.from('photos').upload(fileName, file);
-            
-            if (error) {
-                alert("Error al subir la foto: " + error.message);
-                uploadBtn.innerHTML = originalText;
-                uploadBtn.style.pointerEvents = 'auto';
-                return;
-            }
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const fileName = `${Date.now()}_${i}_${file.name}`;
+                
+                const { data, error } = await _supabase.storage.from('photos').upload(fileName, file);
+                
+                if (error) {
+                    console.error("Error al subir la foto:", error.message);
+                    continue; // Continuar con las siguientes si una falla
+                }
 
-            const { data: urlData } = _supabase.storage.from('photos').getPublicUrl(fileName);
-            
-            photos.push({ src: urlData.publicUrl });
-            addPlanet(urlData.publicUrl, photos.length - 1);
-            updateCounter();
+                const { data: urlData } = _supabase.storage.from('photos').getPublicUrl(fileName);
+                
+                photos.push({ src: urlData.publicUrl });
+                addPlanet(urlData.publicUrl, photos.length - 1);
+                updateCounter();
+            }
 
             uploadBtn.innerHTML = originalText;
             uploadBtn.style.pointerEvents = 'auto';
+            fileInput.value = ''; // Limpiar input para permitir subir las mismas fotos si se desea
         }
     });
 
